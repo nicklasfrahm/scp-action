@@ -6,7 +6,7 @@
 
 ## Usage
 
-Upload local files to remote target:
+### 🔼 Uploading local files to remote target
 
 ```yaml
 name: upload
@@ -40,7 +40,7 @@ jobs:
         target: path/to/target
 ```
 
-Download remote files to local target;
+### 🔽 Downloading remote files to local target
 
 ```yaml
 name: download
@@ -73,6 +73,41 @@ jobs:
           path/to/source/b.txt
         target: path/to/target
 ```
+
+## Input variables
+
+See [action.yml](./action.yml) for more detailed information.
+
+* `host` - ssh host
+* `port` - ssh port, default is `22`
+* `username` - ssh username, default is `root`
+* `timeout` - timeout for ssh to remote host, default is `30s`
+* `action_timeout` - timeout for action, default is `10m`
+* `key` - content of ssh private key. ex raw content of `~/.ssh/id_rsa`
+* `fingerprint` - fingerprint SHA256 of the host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
+* `source` - a list of files to copy
+* `target` - a folder to copy to, default is `.`
+* `direction` - either _upload_ or _download_
+
+SSH Proxy Settings:
+
+* `proxy_host` - proxy host
+* `proxy_port` - proxy port, default is `22`
+* `proxy_username` - proxy username, default is `root`
+* `proxy_key` - content of ssh proxy private key.
+* `proxy_fingerprint` - fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
+
+## Using host fingerprint verification
+
+Setting up SSH host fingerprint verification can help to prevent Person-in-the-Middle attacks. Before setting this up, run the command below to get your SSH host fingerprint. Remember to replace `ed25519` with your appropriate key type (`rsa`, `dsa`, etc.) that your server is using and `example.com` with your host. In modern OpenSSH releases, the _default_ key types to be fetched are `rsa` (since version 5.1), `ecdsa` (since version 6.0), and `ed25519` (since version 6.7).
+
+```
+ssh example.com ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub | cut -d ' ' -f2
+```
+
+## Contributing
+
+We would ❤️ for you to contribute to `nicklasfrahm/scp-action`, pull requests are welcome!
 
 ## License
 
