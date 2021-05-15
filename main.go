@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -124,18 +125,20 @@ func main() {
 	}
 	defer targetClient.Close()
 
-	source := strings.Split(os.Getenv("SOURCE"), "\n")
-	target := strings.TrimSpace(os.Getenv("TARGET"))
+	sourceFiles := strings.Split(os.Getenv("SOURCE"), "\n")
+	targetFolder := strings.TrimSpace(os.Getenv("TARGET"))
 
 	transferredFiles := int64(0)
 
 	if direction == DirectionUpload {
 		log.Println("🔼 Uploading ...")
-		for _, sourceFile := range source {
-			if _, err := scp.CopyTo(targetClient, sourceFile, target); err != nil {
+		for _, sourceFile := range sourceFiles {
+			_, file := path.Split(sourceFile)
+			targetFile := path.Join(targetFolder, file)
+			if _, err := scp.CopyTo(targetClient, sourceFile, targetFile); err != nil {
 				log.Fatalf("Failed to upload file to remote: %v", err)
 			}
-			log.Println(sourceFile + " >> " + target)
+			log.Println(sourceFile + " >> " + targetFile)
 
 			transferredFiles += 1
 		}
@@ -143,11 +146,13 @@ func main() {
 
 	if direction == DirectionDownload {
 		log.Println("🔽 Downloading ...")
-		for _, sourceFile := range source {
-			if _, err := scp.CopyFrom(targetClient, sourceFile, target); err != nil {
+		for _, sourceFile := range sourceFiles {
+			_, file := path.Split(sourceFile)
+			targetFile := path.Join(targetFolder, file)
+			if _, err := scp.CopyFrom(targetClient, sourceFile, targetFile); err != nil {
 				log.Fatalf("Failed to download file from remote: %v", err)
 			}
-			log.Println(sourceFile + " >> " + target)
+			log.Println(sourceFile + " >> " + targetFile)
 
 			transferredFiles += 1
 		}
