@@ -127,27 +127,33 @@ func main() {
 	source := strings.Split(os.Getenv("SOURCE"), "\n")
 	target := strings.TrimSpace(os.Getenv("TARGET"))
 
-	filesCopied := int64(0)
+	transferredFiles := int64(0)
 
 	if direction == DirectionUpload {
+		log.Println("🔼 Uploading ...")
 		for _, sourceFile := range source {
 			if _, err := scp.CopyTo(targetClient, sourceFile, target); err != nil {
 				log.Fatalf("Failed to upload file to remote: %v", err)
 			}
+			log.Println(sourceFile + " >> " + target)
 
-			filesCopied += 1
+			transferredFiles += 1
 		}
 	}
 
-	if direction == DirectionUpload {
+	if direction == DirectionDownload {
+		log.Println("🔽 Downloading ...")
 		for _, sourceFile := range source {
 			if _, err := scp.CopyFrom(targetClient, sourceFile, target); err != nil {
 				log.Fatalf("Failed to download file from remote: %v", err)
 			}
+			log.Println(sourceFile + " >> " + target)
 
-			filesCopied += 1
+			transferredFiles += 1
 		}
 	}
+
+	log.Printf("📡 Transferred %d files\n", transferredFiles)
 }
 
 // VerifyFingerprint takes an ssh key fingerprint as an argument and verifies it against and SSH public key.
