@@ -1,0 +1,64 @@
+name: "SCP File Transfer"
+description: "Upload and download files via SCP."
+author: "Nicklas Frahm"
+inputs:
+  direction:
+    description: "transfer direction"
+    required: yes
+  source:
+    description: "source files to copy"
+    required: yes
+  target:
+    description: "target folder"
+    default: "."
+  timeout:
+    description: "timeout for ssh connections"
+    default: "30s"
+  action_timeout:
+    description: "timeout for action"
+    default: "10m"
+  host:
+    description: "ssh host"
+    required: yes
+  port:
+    description: "ssh port"
+    default: "22"
+  username:
+    description: "ssh username"
+    default: "root"
+  key:
+    description: "content of ssh private key. ex raw content of ~/.ssh/id_rsa"
+    required: yes
+  fingerprint:
+    description: "sha256 fingerprint of the host public key"
+    required: yes
+  proxy_host:
+    description: "ssh proxy host"
+  proxy_port:
+    description: "ssh proxy port"
+    default: "22"
+  proxy_username:
+    description: "ssh proxy username"
+    default: "root"
+  proxy_key:
+    description: "content of ssh proxy private key. ex raw content of ~/.ssh/id_rsa"
+  proxy_fingerprint:
+    description: "sha256 fingerprint of the proxy host public key"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  env:
+    DIRECTION: ${{ inputs.direction }}
+    SOURCE: ${{ inputs.source }}
+    TARGET: ${{ inputs.target }}
+    TIMEOUT: ${{ inputs.timeout }}
+    ACTION_TIMEOUT: ${{ inputs.action_timeout }}
+    HOST: ${{ inputs.host }}
+    PORT: ${{ inputs.port }}
+    USERNAME: ${{ inputs.username }}
+    KEY: ${{ inputs.key }}
+    FINGERPRINT: ${{ inputs.fingerprint }}
+
+branding:
+  icon: "copy"
+  color: "gray-dark"
