@@ -156,7 +156,9 @@ func VerifyFingerprint(expected string) ssh.HostKeyCallback {
 		fingerprint := ssh.FingerprintSHA256(pubKey)
 
 		log.Println(fingerprint)
+		log.Println(len(fingerprint))
 		log.Println(expected)
+		log.Println(len(expected))
 
 		if "SHA256:"+ssh.FingerprintSHA256(pubKey) != expected {
 			return errors.New("fingerprint mismatch")
