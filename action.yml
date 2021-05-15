@@ -44,6 +44,7 @@ inputs:
     description: "content of ssh proxy private key. ex raw content of ~/.ssh/id_rsa"
   proxy_fingerprint:
     description: "sha256 fingerprint of the proxy host public key"
+
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -58,6 +59,11 @@ runs:
     USERNAME: ${{ inputs.username }}
     KEY: ${{ inputs.key }}
     FINGERPRINT: ${{ inputs.fingerprint }}
+    PROXY_HOST: ${{ inputs.proxy_host }}
+    PROXY_PORT: ${{ inputs.proxy_port }}
+    PROXY_USERNAME: ${{ inputs.proxy_username }}
+    PROXY_KEY: ${{ inputs.proxy_key }}
+    PROXY_FINGERPRINT: ${{ inputs.proxy_fingerprint }}
 
 branding:
   icon: "copy"

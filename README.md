@@ -1,5 +1,7 @@
 # 🚀 SCP for GitHub Actions
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/nicklasfrahm/scp-action)](https://goreportcard.com/report/github.com/nicklasfrahm/scp-action)
+
 [GitHub Action](https://github.com/features/actions) for copying files and artifacts via SSH.
 
 ## Usage
@@ -21,7 +23,7 @@ jobs:
       uses: actions/checkout@master
 
     - name: Upload file via SSH
-      uses: nicklasfrahm/scp-action@master
+      uses: nicklasfrahm/scp-action@main
       with:
         action: upload
         host: ${{ secrets.SSH_TARGET_HOST }}
@@ -55,7 +57,7 @@ jobs:
       uses: actions/checkout@master
 
     - name: Download file via SSH
-      uses: nicklasfrahm/scp-action@master
+      uses: nicklasfrahm/scp-action@main
       with:
         action: download
         host: ${{ secrets.SSH_TARGET_HOST }}

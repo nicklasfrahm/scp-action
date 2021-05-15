@@ -1,16 +1,16 @@
 package main
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
 	"log"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/ssh"
 
+	"github.com/dtylman/scp"
 	"github.com/joho/godotenv"
 )
 
@@ -25,7 +25,19 @@ func main() {
 	// Make local testing easier.
 	godotenv.Load()
 
-	// TODO: create action timeout timer
+	// Parse timeout.
+	actionTimeout, err := time.ParseDuration(os.Getenv("ACTION_TIMEOUT"))
+	if err != nil {
+		log.Fatalf("Failed to parse action timeout: %v", err)
+	}
+
+	// Stop the action if it takes longer that the specified timeout.
+	actionTimeoutTimer := time.NewTimer(actionTimeout)
+	go func() {
+		<-actionTimeoutTimer.C
+		log.Fatalf("Failed to run action: %v", errors.New("action timed out"))
+		os.Exit(1)
+	}()
 
 	// Parse direction.
 	direction := os.Getenv("DIRECTION")
@@ -112,22 +124,30 @@ func main() {
 	}
 	defer targetClient.Close()
 
-	// Each ClientConn can support multiple interactive sessions,
-	// represented by a Session.
-	session, err := targetClient.NewSession()
-	if err != nil {
-		log.Fatal("Failed to create session: ", err)
-	}
-	defer session.Close()
+	source := strings.Split(os.Getenv("SOURCE"), "\n")
+	target := strings.TrimSpace(os.Getenv("TARGET"))
 
-	// Once a Session is created, you can execute a single command on
-	// the remote side using the Run method.
-	var buffer bytes.Buffer
-	session.Stdout = &buffer
-	if err := session.Run("/usr/bin/whoami"); err != nil {
-		log.Fatalf("Failed to execute command: %v", err)
+	filesCopied := int64(0)
+
+	if direction == DirectionUpload {
+		for _, sourceFile := range source {
+			if _, err := scp.CopyTo(targetClient, sourceFile, target); err != nil {
+				log.Fatalf("Failed to upload file to remote: %v", err)
+			}
+
+			filesCopied += 1
+		}
 	}
-	fmt.Println(buffer.String())
+
+	if direction == DirectionUpload {
+		for _, sourceFile := range source {
+			if _, err := scp.CopyFrom(targetClient, sourceFile, target); err != nil {
+				log.Fatalf("Failed to download file from remote: %v", err)
+			}
+
+			filesCopied += 1
+		}
+	}
 }
 
 // VerifyFingerprint takes an ssh key fingerprint as an argument and verifies it against and SSH public key.
