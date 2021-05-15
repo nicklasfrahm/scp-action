@@ -128,34 +128,13 @@ func main() {
 	sourceFiles := strings.Split(os.Getenv("SOURCE"), "\n")
 	targetFolder := strings.TrimSpace(os.Getenv("TARGET"))
 
-	transferredFiles := int64(0)
-
+	var transferredFiles int64
 	if direction == DirectionUpload {
-		log.Println("🔼 Uploading ...")
-		for _, sourceFile := range sourceFiles {
-			_, file := path.Split(sourceFile)
-			targetFile := path.Join(targetFolder, file)
-			if _, err := scp.CopyTo(targetClient, sourceFile, targetFile); err != nil {
-				log.Fatalf("Failed to upload file to remote: %v", err)
-			}
-			log.Println(sourceFile + " >> " + targetFile)
-
-			transferredFiles += 1
-		}
+		transferredFiles = Upload(targetClient, sourceFiles, targetFolder)
 	}
 
 	if direction == DirectionDownload {
-		log.Println("🔽 Downloading ...")
-		for _, sourceFile := range sourceFiles {
-			_, file := path.Split(sourceFile)
-			targetFile := path.Join(targetFolder, file)
-			if _, err := scp.CopyFrom(targetClient, sourceFile, targetFile); err != nil {
-				log.Fatalf("Failed to download file from remote: %v", err)
-			}
-			log.Println(sourceFile + " >> " + targetFile)
-
-			transferredFiles += 1
-		}
+		transferredFiles = Download(targetClient, sourceFiles, targetFolder)
 	}
 
 	log.Printf("📡 Transferred %d files\n", transferredFiles)
@@ -171,4 +150,42 @@ func VerifyFingerprint(expected string) ssh.HostKeyCallback {
 
 		return nil
 	}
+}
+
+// Upload uploads local files to a remote host.
+func Upload(client *ssh.Client, sourceFiles []string, targetFolder string) int64 {
+	transferredFiles := int64(0)
+
+	log.Println("🔼 Uploading ...")
+	for _, sourceFile := range sourceFiles {
+		_, file := path.Split(sourceFile)
+		targetFile := path.Join(targetFolder, file)
+		if _, err := scp.CopyTo(client, sourceFile, targetFile); err != nil {
+			log.Fatalf("Failed to upload file to remote: %v", err)
+		}
+		log.Println(sourceFile + " >> " + targetFile)
+
+		transferredFiles += 1
+	}
+
+	return transferredFiles
+}
+
+// Download downloads files from a remote host to the local machine.
+func Download(client *ssh.Client, sourceFiles []string, targetFolder string) int64 {
+	transferredFiles := int64(0)
+
+	log.Println("🔽 Downloading ...")
+	for _, sourceFile := range sourceFiles {
+		_, file := path.Split(sourceFile)
+		targetFile := path.Join(targetFolder, file)
+		if _, err := scp.CopyFrom(client, sourceFile, targetFile); err != nil {
+			log.Fatalf("Failed to download file from remote: %v", err)
+		}
+		log.Println(sourceFile + " >> " + targetFile)
+
+		transferredFiles += 1
+	}
+
+	return transferredFiles
 }
