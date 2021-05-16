@@ -22,6 +22,8 @@ const (
 	DirectionDownload = "download"
 )
 
+type CopyFunc func(client *ssh.Client, source string, target string) (int64, error)
+
 func main() {
 	// Make local testing easier.
 	godotenv.Load()
@@ -125,19 +127,7 @@ func main() {
 	}
 	defer targetClient.Close()
 
-	sourceFiles := strings.Split(os.Getenv("SOURCE"), "\n")
-	targetFolder := strings.TrimSpace(os.Getenv("TARGET"))
-
-	var transferredFiles int64
-	if direction == DirectionUpload {
-		transferredFiles = Upload(targetClient, sourceFiles, targetFolder)
-	}
-
-	if direction == DirectionDownload {
-		transferredFiles = Download(targetClient, sourceFiles, targetFolder)
-	}
-
-	log.Printf("📡 Transferred %d files\n", transferredFiles)
+	Copy(targetClient)
 }
 
 // VerifyFingerprint takes an ssh key fingerprint as an argument and verifies it against and SSH public key.
@@ -152,40 +142,43 @@ func VerifyFingerprint(expected string) ssh.HostKeyCallback {
 	}
 }
 
-// Upload uploads local files to a remote host.
-func Upload(client *ssh.Client, sourceFiles []string, targetFolder string) int64 {
-	transferredFiles := int64(0)
+// Copy transfers files between remote host and local machine.
+func Copy(client *ssh.Client) {
+	sourceFiles := strings.Split(os.Getenv("SOURCE"), "\n")
+	targetFileOrFolder := strings.TrimSpace(os.Getenv("TARGET"))
+	direction := os.Getenv("DIRECTION")
 
-	log.Println("🔼 Uploading ...")
-	for _, sourceFile := range sourceFiles {
-		_, file := path.Split(sourceFile)
-		targetFile := path.Join(targetFolder, file)
-		if _, err := scp.CopyTo(client, sourceFile, targetFile); err != nil {
-			log.Fatalf("Failed to upload file to remote: %v", err)
-		}
-		log.Println(sourceFile + " >> " + targetFile)
-
-		transferredFiles += 1
+	var copy CopyFunc
+	var emoji string
+	if direction == DirectionDownload {
+		copy = scp.CopyFrom
+		emoji = "🔽"
+	}
+	if direction == DirectionUpload {
+		copy = scp.CopyTo
+		emoji = "🔼"
 	}
 
-	return transferredFiles
-}
-
-// Download downloads files from a remote host to the local machine.
-func Download(client *ssh.Client, sourceFiles []string, targetFolder string) int64 {
+	log.Printf("%s %sing ...\n", emoji, strings.Title(direction))
 	transferredFiles := int64(0)
-
-	log.Println("🔽 Downloading ...")
-	for _, sourceFile := range sourceFiles {
-		_, file := path.Split(sourceFile)
-		targetFile := path.Join(targetFolder, file)
-		if _, err := scp.CopyFrom(client, sourceFile, targetFile); err != nil {
-			log.Fatalf("Failed to download file from remote: %v", err)
+	if len(sourceFiles) == 1 {
+		// Rename file if there is only one source file.
+		if _, err := copy(client, sourceFiles[0], targetFileOrFolder); err != nil {
+			log.Fatalf("Failed to %s file from remote: %v", os.Getenv("DIRECTION"), err)
 		}
-		log.Println(sourceFile + " >> " + targetFile)
+		log.Println(sourceFiles[0] + " >> " + targetFileOrFolder)
+	} else {
+		for _, sourceFile := range sourceFiles {
+			_, file := path.Split(sourceFile)
+			targetFile := path.Join(targetFileOrFolder, file)
+			if _, err := copy(client, sourceFile, targetFile); err != nil {
+				log.Fatalf("Failed to %s file from remote: %v", os.Getenv("DIRECTION"), err)
+			}
+			log.Println(sourceFile + " >> " + targetFile)
 
-		transferredFiles += 1
+			transferredFiles += 1
+		}
 	}
 
-	return transferredFiles
+	log.Printf("📡 Transferred %d file(s)\n", transferredFiles)
 }
