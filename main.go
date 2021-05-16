@@ -22,7 +22,7 @@ const (
 	DirectionDownload = "download"
 )
 
-type CopyFunc func(client *ssh.Client, source string, target string) (int64, error)
+type copyFunc func(client *ssh.Client, source string, target string) (int64, error)
 
 func main() {
 	// Make local testing easier.
@@ -148,7 +148,7 @@ func Copy(client *ssh.Client) {
 	targetFileOrFolder := strings.TrimSpace(os.Getenv("TARGET"))
 	direction := os.Getenv("DIRECTION")
 
-	var copy CopyFunc
+	var copy copyFunc
 	var emoji string
 	if direction == DirectionDownload {
 		copy = scp.CopyFrom
