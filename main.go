@@ -156,8 +156,6 @@ func Copy(client *ssh.Client) {
 	}
 
 	log.Printf("%s %sing ...\n", emoji, strings.Title(direction))
-
-	transferredFiles := int64(0)
 	if len(sourceFiles) == 1 {
 		// Rename file if there is only one source file.
 		if _, err := copy(client, sourceFiles[0], targetFileOrFolder); err != nil {
@@ -167,6 +165,8 @@ func Copy(client *ssh.Client) {
 
 		log.Println("📡 Transferred 1 file")
 	} else {
+		transferredFiles := int64(0)
+
 		for _, sourceFile := range sourceFiles {
 			_, file := path.Split(sourceFile)
 			targetFile := path.Join(targetFileOrFolder, file)
@@ -178,7 +178,7 @@ func Copy(client *ssh.Client) {
 
 			transferredFiles += 1
 		}
-	}
 
-	log.Printf("📡 Transferred %d files\n", transferredFiles)
+		log.Printf("📡 Transferred %d files\n", transferredFiles)
+	}
 }
