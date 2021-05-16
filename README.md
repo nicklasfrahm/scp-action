@@ -2,7 +2,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/nicklasfrahm/scp-action)](https://goreportcard.com/report/github.com/nicklasfrahm/scp-action)
 
-[GitHub Action](https://github.com/features/actions) for copying files and artifacts via SSH.
+A [GitHub Action](https://github.com/features/actions) to upload and download files via SCP.
 
 ## Usage
 
