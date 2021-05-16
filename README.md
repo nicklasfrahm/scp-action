@@ -6,6 +6,8 @@
 
 ## Usage
 
+Please note that if you only specify a single file as source, the target must be a file name and not a folder.
+
 ### 🔼 Uploading local files to remote target
 
 ```yaml
@@ -68,10 +70,8 @@ jobs:
         proxy_fingerprint: ${{ secrets.SSH_PROXY_FINGERPRINT }}
         proxy_username: ${{ secrets.SSH_USER }}
         proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: |
-          path/to/source/a.txt
-          path/to/source/b.txt
-        target: path/to/target
+        source: path/to/source/a.txt
+        target: path/to/target/b.txt
 ```
 
 ## Input variables

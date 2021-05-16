@@ -12,7 +12,6 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/dtylman/scp"
-	"github.com/joho/godotenv"
 )
 
 const (
@@ -25,9 +24,6 @@ const (
 type copyFunc func(client *ssh.Client, source string, target string) (int64, error)
 
 func main() {
-	// Make local testing easier.
-	godotenv.Load()
-
 	// Parse timeout.
 	actionTimeout, err := time.ParseDuration(os.Getenv("ACTION_TIMEOUT"))
 	if err != nil {
@@ -160,6 +156,7 @@ func Copy(client *ssh.Client) {
 	}
 
 	log.Printf("%s %sing ...\n", emoji, strings.Title(direction))
+
 	transferredFiles := int64(0)
 	if len(sourceFiles) == 1 {
 		// Rename file if there is only one source file.
@@ -167,10 +164,13 @@ func Copy(client *ssh.Client) {
 			log.Fatalf("Failed to %s file from remote: %v", os.Getenv("DIRECTION"), err)
 		}
 		log.Println(sourceFiles[0] + " >> " + targetFileOrFolder)
+
+		log.Println("📡 Transferred 1 file")
 	} else {
 		for _, sourceFile := range sourceFiles {
 			_, file := path.Split(sourceFile)
 			targetFile := path.Join(targetFileOrFolder, file)
+
 			if _, err := copy(client, sourceFile, targetFile); err != nil {
 				log.Fatalf("Failed to %s file from remote: %v", os.Getenv("DIRECTION"), err)
 			}
@@ -180,5 +180,5 @@ func Copy(client *ssh.Client) {
 		}
 	}
 
-	log.Printf("📡 Transferred %d file(s)\n", transferredFiles)
+	log.Printf("📡 Transferred %d files\n", transferredFiles)
 }
