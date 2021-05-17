@@ -1,0 +1,65 @@
+name: container
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - main.go
+      - go*
+      - .github/workflows/container.yml
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - main
+    paths:
+      - Dockerfile
+      - main.go
+      - go.*
+      - .github/workflows/container.yml
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+env:
+  PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
+  GHCR_CONTAINER_IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Generate container metadata
+        id: meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: ${{ env.GHCR_CONTAINER_IMAGE }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push container image
+        uses: docker/build-push-action@v2
+        with:
+          cache-from: type=registry,ref=${{ env.GHCR_CONTAINER_IMAGE }}:main
+          cache-to: type=inline
+          platforms: ${{ env.PLATFORMS }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
