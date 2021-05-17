@@ -1,5 +1,5 @@
 ### Project-specific ###
-.env
+bin/
 
 ### Go ###
 # Binaries for programs and plugins
