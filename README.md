@@ -1,6 +1,7 @@
 # 🚀 SCP File Transfer for GitHub Actions
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/nicklasfrahm/scp-action)](https://goreportcard.com/report/github.com/nicklasfrahm/scp-action)
+[![container](https://github.com/nicklasfrahm/scp-action/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/nicklasfrahm/scp-action/actions/workflows/container.yml)
 
 A [GitHub Action](https://github.com/features/actions) to upload and download files via SCP.
 
