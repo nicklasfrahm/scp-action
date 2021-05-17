@@ -1,4 +1,4 @@
-# 🚀 SCP for GitHub Actions
+# 🚀 SCP File Transfer for GitHub Actions
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/nicklasfrahm/scp-action)](https://goreportcard.com/report/github.com/nicklasfrahm/scp-action)
 
