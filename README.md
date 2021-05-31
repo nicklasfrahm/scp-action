@@ -28,7 +28,7 @@ jobs:
     - name: Upload file via SSH
       uses: nicklasfrahm/scp-action@main
       with:
-        action: upload
+        direction: upload
         host: ${{ secrets.SSH_TARGET_HOST }}
         fingerprint: ${{ secrets.SSH_TARGET_FINGERPRINT }}
         username: ${{ secrets.SSH_USER }}
@@ -62,7 +62,7 @@ jobs:
     - name: Download file via SSH
       uses: nicklasfrahm/scp-action@main
       with:
-        action: download
+        direction: download
         host: ${{ secrets.SSH_TARGET_HOST }}
         fingerprint: ${{ secrets.SSH_TARGET_FINGERPRINT }}
         username: ${{ secrets.SSH_USER }}
