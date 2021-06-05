@@ -131,7 +131,7 @@ func VerifyFingerprint(expected string) ssh.HostKeyCallback {
 	return func(hostname string, remote net.Addr, pubKey ssh.PublicKey) error {
 		fingerprint := ssh.FingerprintSHA256(pubKey)
 		if fingerprint != expected {
-			return errors.New("fingerprint mismatch")
+			return errors.New("fingerprint mismatch: server fingerprint: " + fingerprint)
 		}
 
 		return nil
