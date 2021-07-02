@@ -26,6 +26,9 @@ inputs:
   username:
     description: "ssh username"
     default: "root"
+  insecure_password:
+    description: "ssh password"
+    default: ""
   key:
     description: "content of ssh private key. ex raw content of ~/.ssh/id_rsa"
     required: yes
@@ -40,6 +43,9 @@ inputs:
   proxy_username:
     description: "ssh proxy username"
     default: "root"
+  insecure_proxy_password:
+    description: "ssh proxy password"
+    default: ""
   proxy_key:
     description: "content of ssh proxy private key. ex raw content of ~/.ssh/id_rsa"
   proxy_fingerprint:
@@ -57,11 +63,13 @@ runs:
     HOST: ${{ inputs.host }}
     PORT: ${{ inputs.port }}
     USERNAME: ${{ inputs.username }}
+    INSECURE_PASSWORD: ${{ inputs.insecure_password }}
     KEY: ${{ inputs.key }}
     FINGERPRINT: ${{ inputs.fingerprint }}
     PROXY_HOST: ${{ inputs.proxy_host }}
     PROXY_PORT: ${{ inputs.proxy_port }}
     PROXY_USERNAME: ${{ inputs.proxy_username }}
+    INSECURE_PROXY_PASSWORD: ${{ inputs.insecure_proxy_password }}
     PROXY_KEY: ${{ inputs.proxy_key }}
     PROXY_FINGERPRINT: ${{ inputs.proxy_fingerprint }}
 

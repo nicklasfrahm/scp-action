@@ -56,19 +56,11 @@ func main() {
 		log.Fatalf("❌ Failed to parse target host: %v", errors.New("target host must not be empty"))
 	}
 
-	// Create signer for public key authentication method.
-	targetSigner, err := ssh.ParsePrivateKey([]byte(os.Getenv("KEY")))
-	if err != nil {
-		log.Fatalf("❌ Failed to parse target key: %v", err)
-	}
-
 	// Create configuration for SSH target.
 	targetConfig := &ssh.ClientConfig{
-		Timeout: timeout,
-		User:    os.Getenv("USERNAME"),
-		Auth: []ssh.AuthMethod{
-			ssh.PublicKeys(targetSigner),
-		},
+		Timeout:         timeout,
+		User:            os.Getenv("USERNAME"),
+		Auth:            ConfigureAuthentication(os.Getenv("KEY"), os.Getenv("INSECURE_PASSWORD")),
 		HostKeyCallback: VerifyFingerprint(os.Getenv("FINGERPRINT")),
 	}
 
@@ -80,19 +72,11 @@ func main() {
 
 	// Check if a proxy should be used.
 	if proxyHost := os.Getenv("PROXY_HOST"); proxyHost != "" {
-		// Create signer for public key authentication method.
-		proxySigner, err := ssh.ParsePrivateKey([]byte(os.Getenv("PROXY_KEY")))
-		if err != nil {
-			log.Fatalf("❌ Failed to parse proxy key: %v", err)
-		}
-
 		// Create SSH config for SSH proxy.
 		proxyConfig := &ssh.ClientConfig{
-			Timeout: timeout,
-			User:    os.Getenv("PROXY_USERNAME"),
-			Auth: []ssh.AuthMethod{
-				ssh.PublicKeys(proxySigner),
-			},
+			Timeout:         timeout,
+			User:            os.Getenv("PROXY_USERNAME"),
+			Auth:            ConfigureAuthentication(os.Getenv("PROXY_KEY"), os.Getenv("INSECURE_PROXY_PASSWORD")),
 			HostKeyCallback: VerifyFingerprint(os.Getenv("PROXY_FINGERPRINT")),
 		}
 
@@ -181,4 +165,28 @@ func Copy(client *ssh.Client) {
 
 		log.Printf("📡 Transferred %d files\n", transferredFiles)
 	}
+}
+
+// ConfigureAuthentication configures the authentication method.
+func ConfigureAuthentication(key string, password string) []ssh.AuthMethod {
+	// Create signer for public key authentication method.
+	auth := make([]ssh.AuthMethod, 1)
+	if key != "" {
+		targetSigner, err := ssh.ParsePrivateKey([]byte(key))
+		if err != nil {
+			log.Fatalf("❌ Failed to parse private key: %v", err)
+		}
+
+		// Configure public key authentication.
+		auth[0] = ssh.PublicKeys(targetSigner)
+	} else if password != "" {
+		// Fall back to password authentication.
+		auth[0] = ssh.Password(password)
+		log.Println("⚠️ Using a password for authentication is insecure!")
+		log.Println("⚠️ Please consider using public key authentication!")
+	} else {
+		log.Fatal("❌ Failed to configure authentication method: missing credentials")
+	}
+
+	return auth
 }

@@ -22,25 +22,25 @@ jobs:
     name: Upload
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@master
+      - name: Check out repository
+        uses: actions/checkout@master
 
-    - name: Upload file via SSH
-      uses: nicklasfrahm/scp-action@main
-      with:
-        direction: upload
-        host: ${{ secrets.SSH_TARGET_HOST }}
-        fingerprint: ${{ secrets.SSH_TARGET_FINGERPRINT }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        proxy_host: ${{ secrets.SSH_PROXY_HOST }}
-        proxy_fingerprint: ${{ secrets.SSH_PROXY_FINGERPRINT }}
-        proxy_username: ${{ secrets.SSH_USER }}
-        proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: |
-          path/to/source/a.txt
-          path/to/source/b.txt
-        target: path/to/target
+      - name: Upload file via SSH
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: upload
+          host: ${{ secrets.SSH_TARGET_HOST }}
+          fingerprint: ${{ secrets.SSH_TARGET_FINGERPRINT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          proxy_host: ${{ secrets.SSH_PROXY_HOST }}
+          proxy_fingerprint: ${{ secrets.SSH_PROXY_FINGERPRINT }}
+          proxy_username: ${{ secrets.SSH_USER }}
+          proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: |
+            path/to/source/a.txt
+            path/to/source/b.txt
+          target: path/to/target
 ```
 
 ### 🔽 Downloading remote files to local target
@@ -56,47 +56,49 @@ jobs:
     name: Download
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@master
+      - name: Check out repository
+        uses: actions/checkout@master
 
-    - name: Download file via SSH
-      uses: nicklasfrahm/scp-action@main
-      with:
-        direction: download
-        host: ${{ secrets.SSH_TARGET_HOST }}
-        fingerprint: ${{ secrets.SSH_TARGET_FINGERPRINT }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        proxy_host: ${{ secrets.SSH_PROXY_HOST }}
-        proxy_fingerprint: ${{ secrets.SSH_PROXY_FINGERPRINT }}
-        proxy_username: ${{ secrets.SSH_USER }}
-        proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: path/to/source/a.txt
-        target: path/to/target/b.txt
+      - name: Download file via SSH
+        uses: nicklasfrahm/scp-action@main
+        with:
+          direction: download
+          host: ${{ secrets.SSH_TARGET_HOST }}
+          fingerprint: ${{ secrets.SSH_TARGET_FINGERPRINT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          proxy_host: ${{ secrets.SSH_PROXY_HOST }}
+          proxy_fingerprint: ${{ secrets.SSH_PROXY_FINGERPRINT }}
+          proxy_username: ${{ secrets.SSH_USER }}
+          proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: path/to/source/a.txt
+          target: path/to/target/b.txt
 ```
 
 ## Input variables
 
 See [action.yml](./action.yml) for more detailed information.
 
-* `host` - ssh host
-* `port` - ssh port, default is `22`
-* `username` - ssh username, default is `root`
-* `timeout` - timeout for ssh to remote host, default is `30s`
-* `action_timeout` - timeout for action, default is `10m`
-* `key` - content of ssh private key. ex raw content of `~/.ssh/id_rsa`
-* `fingerprint` - fingerprint SHA256 of the host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
-* `source` - a list of files to copy
-* `target` - a folder to copy to, default is `.`
-* `direction` - either _upload_ or _download_
+- `host` - ssh host
+- `port` - ssh port, default is `22`
+- `username` - ssh username, default is `root`
+- `insecure_password` - ssh password
+- `timeout` - timeout for ssh to remote host, default is `30s`
+- `action_timeout` - timeout for action, default is `10m`
+- `key` - content of ssh private key, raw content of `~/.ssh/id_rsa`
+- `fingerprint` - fingerprint SHA256 of the host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
+- `source` - a list of files to copy
+- `target` - a folder to copy to, default is `.`
+- `direction` - either _upload_ or _download_
 
 SSH Proxy Settings:
 
-* `proxy_host` - proxy host
-* `proxy_port` - proxy port, default is `22`
-* `proxy_username` - proxy username, default is `root`
-* `proxy_key` - content of ssh proxy private key.
-* `proxy_fingerprint` - fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
+- `proxy_host` - proxy host
+- `proxy_port` - proxy port, default is `22`
+- `proxy_username` - proxy username, default is `root`
+- `insecure_proxy_password` - ssh proxy password
+- `proxy_key` - content of ssh proxy private key.
+- `proxy_fingerprint` - fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
 
 ## Using host fingerprint verification
 
