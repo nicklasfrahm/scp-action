@@ -60,7 +60,7 @@ func main() {
 	targetConfig := &ssh.ClientConfig{
 		Timeout:         timeout,
 		User:            os.Getenv("USERNAME"),
-		Auth:            ConfigureAuthentication(os.Getenv("KEY"), os.Getenv("INSECURE_PASSWORD")),
+		Auth:            ConfigureAuthentication(os.Getenv("KEY"), os.Getenv("PASSPHRASE"), os.Getenv("INSECURE_PASSWORD")),
 		HostKeyCallback: VerifyFingerprint(os.Getenv("FINGERPRINT")),
 	}
 
@@ -76,7 +76,7 @@ func main() {
 		proxyConfig := &ssh.ClientConfig{
 			Timeout:         timeout,
 			User:            os.Getenv("PROXY_USERNAME"),
-			Auth:            ConfigureAuthentication(os.Getenv("PROXY_KEY"), os.Getenv("INSECURE_PROXY_PASSWORD")),
+			Auth:            ConfigureAuthentication(os.Getenv("PROXY_KEY"), os.Getenv("PROXY_PASSPHRASE"), os.Getenv("INSECURE_PROXY_PASSWORD")),
 			HostKeyCallback: VerifyFingerprint(os.Getenv("PROXY_FINGERPRINT")),
 		}
 
@@ -168,11 +168,15 @@ func Copy(client *ssh.Client) {
 }
 
 // ConfigureAuthentication configures the authentication method.
-func ConfigureAuthentication(key string, password string) []ssh.AuthMethod {
+func ConfigureAuthentication(key string, passphrase string, password string) []ssh.AuthMethod {
 	// Create signer for public key authentication method.
 	auth := make([]ssh.AuthMethod, 1)
 	if key != "" {
-		targetSigner, err := ssh.ParsePrivateKey([]byte(key))
+		if passphrase != "" {
+			targetSigner, err := ParsePrivateKeyWithPassphrase([]byte(key), []byte(passphrase))
+		} else {
+			targetSigner, err := ssh.ParsePrivateKey([]byte(key))
+		}
 		if err != nil {
 			log.Fatalf("❌ Failed to parse private key: %v", err)
 		}

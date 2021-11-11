@@ -26,6 +26,9 @@ inputs:
   username:
     description: "ssh username"
     default: "root"
+  passphrase:
+    description: "ssh key passphrase"
+    default: ""
   insecure_password:
     description: "ssh password"
     default: ""
@@ -43,6 +46,9 @@ inputs:
   proxy_username:
     description: "ssh proxy username"
     default: "root"
+  proxy_passphrase:
+    description: "ssh proxy key passphrase"
+    default: ""
   insecure_proxy_password:
     description: "ssh proxy password"
     default: ""
@@ -63,12 +69,14 @@ runs:
     HOST: ${{ inputs.host }}
     PORT: ${{ inputs.port }}
     USERNAME: ${{ inputs.username }}
+    PASSPHRASE: ${{ inputs.passphrase }}
     INSECURE_PASSWORD: ${{ inputs.insecure_password }}
     KEY: ${{ inputs.key }}
     FINGERPRINT: ${{ inputs.fingerprint }}
     PROXY_HOST: ${{ inputs.proxy_host }}
     PROXY_PORT: ${{ inputs.proxy_port }}
     PROXY_USERNAME: ${{ inputs.proxy_username }}
+    PROXY_PASSPHRASE: ${{ inputs.proxy_passphrase }}
     INSECURE_PROXY_PASSWORD: ${{ inputs.insecure_proxy_password }}
     PROXY_KEY: ${{ inputs.proxy_key }}
     PROXY_FINGERPRINT: ${{ inputs.proxy_fingerprint }}
