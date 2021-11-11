@@ -171,12 +171,17 @@ func Copy(client *ssh.Client) {
 func ConfigureAuthentication(key string, passphrase string, password string) []ssh.AuthMethod {
 	// Create signer for public key authentication method.
 	auth := make([]ssh.AuthMethod, 1)
+	
 	if key != "" {
+		var err error
+		var targetSigner ssh.Signer
+		
 		if passphrase != "" {
-			targetSigner, err := ssh.ParsePrivateKeyWithPassphrase([]byte(key), []byte(passphrase))
+			targetSigner, err = ssh.ParsePrivateKeyWithPassphrase([]byte(key), []byte(passphrase))
 		} else {
-			targetSigner, err := ssh.ParsePrivateKey([]byte(key))
+			targetSigner, err = ssh.ParsePrivateKey([]byte(key))
 		}
+
 		if err != nil {
 			log.Fatalf("❌ Failed to parse private key: %v", err)
 		}
