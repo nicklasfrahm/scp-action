@@ -82,6 +82,7 @@ See [action.yml](./action.yml) for more detailed information.
 - `host` - ssh host
 - `port` - ssh port, default is `22`
 - `username` - ssh username, default is `root`
+- `passphrase` - ssh passphrase
 - `insecure_password` - ssh password
 - `timeout` - timeout for ssh to remote host, default is `30s`
 - `action_timeout` - timeout for action, default is `10m`
@@ -96,6 +97,7 @@ SSH Proxy Settings:
 - `proxy_host` - proxy host
 - `proxy_port` - proxy port, default is `22`
 - `proxy_username` - proxy username, default is `root`
+- `passphrase` - ssh proxy passphrase
 - `insecure_proxy_password` - ssh proxy password
 - `proxy_key` - content of ssh proxy private key.
 - `proxy_fingerprint` - fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
