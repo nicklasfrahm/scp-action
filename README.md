@@ -77,30 +77,31 @@ jobs:
 
 ## Input variables
 
-See [action.yml](./action.yml) for more detailed information.
+See [action.yml](./action.yml) for more detailed information. **Please note that all input variables must have string values. It is thus recommend to always use quotes.**
 
-- `host` - ssh host
-- `port` - ssh port, default is `22`
-- `username` - ssh username, default is `root`
-- `passphrase` - ssh passphrase
-- `insecure_password` - ssh password
-- `timeout` - timeout for ssh to remote host, default is `30s`
-- `action_timeout` - timeout for action, default is `10m`
-- `key` - content of ssh private key, raw content of `~/.ssh/id_rsa`
-- `fingerprint` - fingerprint SHA256 of the host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
-- `source` - a list of files to copy
-- `target` - a folder to copy to, default is `.`
-- `direction` - either _upload_ or _download_
-
-SSH Proxy Settings:
-
-- `proxy_host` - proxy host
-- `proxy_port` - proxy port, default is `22`
-- `proxy_username` - proxy username, default is `root`
-- `passphrase` - ssh proxy passphrase
-- `insecure_proxy_password` - ssh proxy password
-- `proxy_key` - content of ssh proxy private key.
-- `proxy_fingerprint` - fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)
+| Input variable                      | Default value | Description                                                                                                                      |
+| ----------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `host`                              | _required_    | SSH host                                                                                                                         |
+| `port`                              | `22`          | SSH port                                                                                                                         |
+| `username`                          | `root`        | SSH username                                                                                                                     |
+| `passphrase`                        | _none_        | SSH passphrase                                                                                                                   |
+| `insecure_password`                 | _none_        | SSH password, not recommended for security reasons                                                                               |
+| `timeout`                           | `30s`         | Timeout for SSH connection to remote host                                                                                        |
+| `action_timeout`                    | `10m`         | Timeout for action                                                                                                               |
+| `key`                               | _none_        | Content of ssh private key, raw content of `~/.ssh/id_rsa`                                                                       |
+| `fingerprint`                       | _none_        | Fingerprint SHA256 of the host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification)       |
+| `insecure_ignore_fingerprint`       | `false`       | Skip fingerprint verification of the host public key, not recommended for security reasons                                       |
+| `source`                            | _required_    | A list of files to copy                                                                                                          |
+| `target`                            | `.`           | A folder to copy to                                                                                                              |
+| `direction`                         | _none_        | Transfer direction, must be either `upload` or `download`                                                                        |
+| `proxy_host`                        | _none_        | SSH proxy host                                                                                                                   |
+| `proxy_port`                        | `22`          | SSH proxy port                                                                                                                   |
+| `proxy_username`                    | `root`        | SSH proxy username                                                                                                               |
+| `passphrase`                        | _none_        | SSH proxy passphrase                                                                                                             |
+| `insecure_proxy_password`           | _none_        | SSH proxy password                                                                                                               |
+| `proxy_key`                         | _none_        | Content of SSH proxy private key                                                                                                 |
+| `proxy_fingerprint`                 | _none_        | Fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification) |
+| `insecure_proxy_ignore_fingerprint` | _none_        | Skip fingerprint verification of the proxy host public key, not recommended for security reasons                                 |
 
 ## Using host fingerprint verification
 
