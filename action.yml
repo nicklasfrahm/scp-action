@@ -38,6 +38,9 @@ inputs:
   fingerprint:
     description: "sha256 fingerprint of the host public key"
     required: yes
+  insecure_ignore_fingerprint:
+    description: "skip fingerprint verification of the host public key"
+    default: "false"
   proxy_host:
     description: "ssh proxy host"
   proxy_port:
@@ -56,6 +59,9 @@ inputs:
     description: "content of ssh proxy private key. ex raw content of ~/.ssh/id_rsa"
   proxy_fingerprint:
     description: "sha256 fingerprint of the proxy host public key"
+  insecure_proxy_ignore_fingerprint:
+    description: "skip fingerprint verification of the proxy host public key"
+    default: "false"
 
 runs:
   using: "docker"
@@ -73,6 +79,7 @@ runs:
     INSECURE_PASSWORD: ${{ inputs.insecure_password }}
     KEY: ${{ inputs.key }}
     FINGERPRINT: ${{ inputs.fingerprint }}
+    INSECURE_IGNORE_FINGERPRINT: ${{ inputs.insecure_ignore_fingerprint }}
     PROXY_HOST: ${{ inputs.proxy_host }}
     PROXY_PORT: ${{ inputs.proxy_port }}
     PROXY_USERNAME: ${{ inputs.proxy_username }}
@@ -80,6 +87,7 @@ runs:
     INSECURE_PROXY_PASSWORD: ${{ inputs.insecure_proxy_password }}
     PROXY_KEY: ${{ inputs.proxy_key }}
     PROXY_FINGERPRINT: ${{ inputs.proxy_fingerprint }}
+    INSECURE_PROXY_IGNORE_FINGERPRINT: ${{ inputs.insecure_proxy_ignore_fingerprint }}
 
 branding:
   icon: "copy"
