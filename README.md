@@ -97,7 +97,7 @@ See [action.yml](./action.yml) for more detailed information. **Please note that
 | `proxy_host`                        | _none_        | SSH proxy host                                                                                                                   |
 | `proxy_port`                        | `22`          | SSH proxy port                                                                                                                   |
 | `proxy_username`                    | `root`        | SSH proxy username                                                                                                               |
-| `passphrase`                        | _none_        | SSH proxy passphrase                                                                                                             |
+| `proxy_passphrase`                  | _none_        | SSH proxy passphrase                                                                                                             |
 | `insecure_proxy_password`           | _none_        | SSH proxy password                                                                                                               |
 | `proxy_key`                         | _none_        | Content of SSH proxy private key                                                                                                 |
 | `proxy_fingerprint`                 | _none_        | Fingerprint SHA256 of the proxy host public key, see [Using host fingerprint verification](#using-host-fingerprint-verification) |
