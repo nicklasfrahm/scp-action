@@ -8,6 +8,6 @@ require (
 )
 
 require (
-	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/sirupsen/logrus v1.8.3 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 )
